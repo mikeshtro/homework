@@ -1,7 +1,7 @@
 import { FileSystemTree } from "@webcontainer/api";
 
 export const files: FileSystemTree = {
-  'index.js': {
+  "index.js": {
     file: {
       contents: `
 import express from 'express';
@@ -14,10 +14,10 @@ app.get('/', (req, res) => {
 
 app.listen(port, () => {
   console.log(\`App is live at http://localhost:\${port}\`);
-})'`,
+});`,
     },
   },
-  'package.json': {
+  "package.json": {
     file: {
       contents: `
 {
@@ -31,7 +31,7 @@ app.listen(port, () => {
     "start": "nodemon --watch './' index.js"
   }
 }
-      `
-    }
-  }
-}
+      `,
+    },
+  },
+};
