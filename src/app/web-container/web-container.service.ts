@@ -13,7 +13,7 @@ export class WebContainerService {
   private readonly instance = signal<WebContainer | undefined>(undefined);
   private readonly process = signal<WebContainerProcess | undefined>(undefined);
 
-  readonly serverUrl = signal<string>('loading.html');
+  readonly serverUrl = signal<string | undefined>(undefined);
   readonly processOutput = signal<string>('');
 
   async boot(): Promise<void> {
