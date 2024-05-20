@@ -1,17 +1,9 @@
-import {
-  Component,
-  computed,
-  effect,
-  ElementRef,
-  HostListener,
-  inject,
-  viewChild,
-} from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FileNode } from '@webcontainer/api';
-import { Terminal } from 'xterm';
-import { FitAddon } from 'xterm-addon-fit';
 
+import { TerminalSize } from '../common/terminal-size';
+import { TerminalComponent } from '../common/terminal.component';
 import { files } from '../utils/files';
 import { WebContainerService } from '../web-container/web-container.service';
 
@@ -29,7 +21,11 @@ I am a textarea</textarea
         <iframe [src]="iframeUrl()"></iframe>
       </div>
     </div>
-    <div #terminal class="terminal"></div>
+    <app-terminal
+      [data]="terminalData()"
+      (dataChange)="setTerminalData($event)"
+      (sizeChange)="resize($event)"
+    />
   `,
   styles: `
     .container {
@@ -56,20 +52,13 @@ I am a textarea</textarea
       border-radius: 0.5rem;
     }
   `,
+  imports: [TerminalComponent],
 })
 export default class HomeComponent {
   private readonly sanitizer = inject(DomSanitizer);
   private readonly webContainerService = inject(WebContainerService);
 
-  private terminalEl = viewChild<ElementRef>('terminal');
-
-  private terminal = new Terminal({ convertEol: true });
-  private fitAddon = new FitAddon();
-
-  @HostListener('window:resize') resize() {
-    this.fitAddon.fit();
-    this.webContainerService.resize(this.terminal.cols, this.terminal.rows);
-  }
+  protected terminalData = this.webContainerService.processOutput;
 
   protected iframeUrl = computed(() =>
     this.sanitizer.bypassSecurityTrustResourceUrl(
@@ -77,23 +66,9 @@ export default class HomeComponent {
     )
   );
 
-  private setupTerminal = effect(() => {
-    const terminalEl = this.terminalEl();
-    if (terminalEl != null) {
-      this.terminal.loadAddon(this.fitAddon);
-      this.terminal.open(terminalEl.nativeElement);
-
-      this.webContainerService.onProcessData((data) =>
-        this.terminal.write(data)
-      );
-      this.terminal.onData((data) =>
-        this.webContainerService.writeProcessData(data)
-      );
-
-      this.resize();
-      this.setupTerminal.destroy();
-    }
-  });
+  protected get textAreaValue() {
+    return (files['index.js'] as FileNode).file.contents.toString();
+  }
 
   ngOnInit() {
     this.webContainerService.boot().then(() => {
@@ -102,8 +77,12 @@ export default class HomeComponent {
     });
   }
 
-  protected get textAreaValue() {
-    return (files['index.js'] as FileNode).file.contents.toString();
+  protected resize(size: TerminalSize) {
+    this.webContainerService.resize(size.cols, size.rows);
+  }
+
+  protected setTerminalData(data: string) {
+    this.webContainerService.writeProcessData(data);
   }
 
   protected setTextAreaValue(e: Event) {
