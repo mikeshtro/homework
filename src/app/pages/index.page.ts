@@ -1,11 +1,11 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
-import { FileNode } from '@webcontainer/api';
+import { forkJoin, from, switchMap } from 'rxjs';
 
 import { EditorComponent } from '../common/editor/editor.component';
 import { PreviewComponent } from '../common/preview/preview.component';
 import { TerminalSize } from '../common/terminal/terminal-size';
 import { TerminalComponent } from '../common/terminal/terminal.component';
-import { files } from '../utils/files';
 import { WebContainerService } from '../web-container/web-container.service';
 
 @Component({
@@ -37,21 +37,29 @@ import { WebContainerService } from '../web-container/web-container.service';
   imports: [TerminalComponent, EditorComponent, PreviewComponent],
 })
 export default class HomeComponent {
+  private readonly httpClient = inject(HttpClient);
   private readonly webContainerService = inject(WebContainerService);
+
+  private readonly files = this.httpClient.get('api/v1/files', {
+    responseType: 'arraybuffer',
+  });
 
   protected readonly terminalData = this.webContainerService.processOutput;
 
   protected readonly previewUrl = this.webContainerService.serverUrl;
 
-  protected get editorValue() {
-    return (files['index.js'] as FileNode).file.contents.toString();
-  }
+  protected editorValue = '';
 
   ngOnInit() {
-    this.webContainerService.boot().then(() => {
-      this.webContainerService.mount(files);
-      this.webContainerService.startShell();
-    });
+    forkJoin([this.files, from(this.webContainerService.boot())])
+      .pipe(
+        switchMap(([files]) => this.webContainerService.mount(files)),
+        switchMap(() => this.webContainerService.startShell()),
+        switchMap(() => this.webContainerService.readFile('index.js'))
+      )
+      .subscribe((indexjs) => {
+        this.editorValue = indexjs;
+      });
   }
 
   protected resize(size: TerminalSize) {

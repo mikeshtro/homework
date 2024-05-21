@@ -1,9 +1,5 @@
-import { Injectable, Signal, signal } from '@angular/core';
-import {
-  FileSystemTree,
-  WebContainer,
-  WebContainerProcess,
-} from '@webcontainer/api';
+import { Injectable, signal } from '@angular/core';
+import { WebContainer, WebContainerProcess } from '@webcontainer/api';
 
 @Injectable({ providedIn: 'root' })
 export class WebContainerService {
@@ -58,12 +54,26 @@ export class WebContainerService {
     await this.instance()?.fs.writeFile(file, data);
   }
 
+  async readFile(file: string): Promise<string> {
+    const instance = this.instance();
+    if (instance == null) {
+      return Promise.reject('WebContainer instance is not running');
+    }
+
+    return instance.fs.readFile(file, 'utf-8');
+  }
+
   writeProcessData(data: string): void {
     this.processWriter?.write(data);
   }
 
-  mount(files: FileSystemTree): void {
-    this.instance()?.mount(files);
+  mount(files: ArrayBuffer): Promise<void> {
+    const instance = this.instance();
+    if (instance == null) {
+      return Promise.reject('WebContainer instance is not running');
+    }
+
+    return instance.mount(files);
   }
 
   resize(cols: number, rows: number): void {
