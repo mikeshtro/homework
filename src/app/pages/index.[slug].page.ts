@@ -1,5 +1,11 @@
+import {
+  injectContent,
+  injectContentFiles,
+  MarkdownComponent,
+} from '@analogjs/content';
 import { HttpClient } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { forkJoin, from, switchMap } from 'rxjs';
 
 import { EditorComponent } from '../common/editor/editor.component';
@@ -24,6 +30,10 @@ import { WebContainerService } from '../web-container/web-container.service';
       (dataChange)="setTerminalData($event)"
       (sizeChange)="resize($event)"
     />
+    @if (markdown()) {
+
+    <analog-markdown [content]="markdown()?.content" />
+    }
   `,
   styles: `
     .container {
@@ -34,7 +44,12 @@ import { WebContainerService } from '../web-container/web-container.service';
       width: 100%;
     }
   `,
-  imports: [TerminalComponent, EditorComponent, PreviewComponent],
+  imports: [
+    MarkdownComponent,
+    TerminalComponent,
+    EditorComponent,
+    PreviewComponent,
+  ],
 })
 export default class HomeComponent {
   private readonly httpClient = inject(HttpClient);
@@ -49,6 +64,8 @@ export default class HomeComponent {
   protected readonly previewUrl = this.webContainerService.serverUrl;
 
   protected editorValue = '';
+
+  protected readonly markdown = toSignal(injectContent());
 
   ngOnInit() {
     forkJoin([this.files, from(this.webContainerService.boot())])
