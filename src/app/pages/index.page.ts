@@ -1,7 +1,6 @@
-import { injectContent, MarkdownComponent } from '@analogjs/content';
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { forkJoin, from, switchMap } from 'rxjs';
 
 import { EditorComponent } from '../common/editor/editor.component';
@@ -11,7 +10,7 @@ import { TerminalComponent } from '../common/terminal/terminal.component';
 import { WebContainerService } from '../web-container/web-container.service';
 
 @Component({
-  selector: 'homework-home',
+  selector: 'homework-index-page',
   standalone: true,
   template: `
     <div class="container">
@@ -23,9 +22,8 @@ import { WebContainerService } from '../web-container/web-container.service';
       (dataChange)="setTerminalData($event)"
       (sizeChange)="resize($event)"
     />
-    @if (markdown()) {
-      <analog-markdown [content]="markdown()?.content" />
-    }
+    <a routerLink="first">First</a>
+    <router-outlet />
   `,
   styles: `
     .container {
@@ -36,9 +34,9 @@ import { WebContainerService } from '../web-container/web-container.service';
       width: 100%;
     }
   `,
-  imports: [MarkdownComponent, TerminalComponent, EditorComponent, PreviewComponent],
+  imports: [RouterOutlet, RouterLink, TerminalComponent, EditorComponent, PreviewComponent],
 })
-export default class HomeComponent implements OnInit {
+export default class IndexPageComponent implements OnInit {
   private readonly httpClient = inject(HttpClient);
   private readonly webContainerService = inject(WebContainerService);
 
@@ -51,8 +49,6 @@ export default class HomeComponent implements OnInit {
   protected readonly previewUrl = this.webContainerService.serverUrl;
 
   protected editorValue = '';
-
-  protected readonly markdown = toSignal(injectContent());
 
   ngOnInit(): void {
     forkJoin([this.files, from(this.webContainerService.boot())])
