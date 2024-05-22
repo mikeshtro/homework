@@ -55,7 +55,7 @@ export default class IndexPageComponent implements OnInit {
       .pipe(
         switchMap(([files]) => this.webContainerService.mount(files)),
         switchMap(() => this.webContainerService.startShell()),
-        switchMap(() => this.webContainerService.readFile('index.js'))
+        switchMap(() => this.webContainerService.readFile('src/app/app.component.ts'))
       )
       .subscribe(indexjs => {
         this.editorValue = indexjs;
@@ -72,7 +72,7 @@ export default class IndexPageComponent implements OnInit {
 
   protected setEditorValue(value: string | undefined): void {
     if (value != null) {
-      this.webContainerService.writeFile('/index.js', value);
+      this.webContainerService.writeFile('src/app/app.component.ts', value);
     }
   }
 }

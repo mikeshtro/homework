@@ -1,4 +1,5 @@
 import { Component, effect, ElementRef, inject, model } from '@angular/core';
+import { angular } from '@codemirror/lang-angular';
 import { javascript } from '@codemirror/lang-javascript';
 import { EditorView } from '@codemirror/view';
 import { basicSetup } from 'codemirror';
@@ -26,7 +27,12 @@ export class EditorComponent {
     extensions: [
       basicSetup,
       javascript(),
-      EditorView.updateListener.of(v => this.value.set(v.view.state.doc.toString())),
+      angular(),
+      EditorView.updateListener.of(v => {
+        if (this.value() !== v.view.state.doc.toString()) {
+          this.value.set(v.view.state.doc.toString());
+        }
+      }),
     ],
     parent: this.elementRef.nativeElement,
   });
