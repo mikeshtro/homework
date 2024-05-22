@@ -14,9 +14,7 @@ export class WebContainerService {
 
   async boot(): Promise<void> {
     if (this.state !== 'empty' && this.state !== 'error') {
-      return Promise.reject(
-        Error('Web container is already booting or booted')
-      );
+      return Promise.reject(Error('Web container is already booting or booted'));
     }
 
     this.state = 'booting';

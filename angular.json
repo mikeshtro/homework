@@ -47,8 +47,17 @@
         },
         "test": {
           "builder": "@analogjs/platform:vitest"
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["./**/*.ts", "./**/*.html"]
+          }
         }
       }
     }
+  },
+  "cli": {
+    "schematicCollections": ["@angular-eslint/schematics"]
   }
 }

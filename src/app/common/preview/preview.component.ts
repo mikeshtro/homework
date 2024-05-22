@@ -2,7 +2,7 @@ import { Component, computed, inject, input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-preview',
+  selector: 'homework-preview',
   standalone: true,
   template: `<iframe [src]="iframeUrl()"></iframe>`,
   styles: `

@@ -15,7 +15,7 @@ import { FitAddon } from 'xterm-addon-fit';
 import { TerminalSize } from './terminal-size';
 
 @Component({
-  selector: 'app-terminal',
+  selector: 'homework-terminal',
   standalone: true,
   template: '',
 })
@@ -51,7 +51,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.terminal.loadAddon(this.fitAddon);
     this.terminal.open(this.elementRef.nativeElement);
 
-    this.terminal.onData((data) => this.dataChange.emit(data));
+    this.terminal.onData(data => this.dataChange.emit(data));
 
     this.resize();
   }

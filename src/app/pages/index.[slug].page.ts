@@ -1,10 +1,6 @@
-import {
-  injectContent,
-  injectContentFiles,
-  MarkdownComponent,
-} from '@analogjs/content';
+import { injectContent, MarkdownComponent } from '@analogjs/content';
 import { HttpClient } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { forkJoin, from, switchMap } from 'rxjs';
 
@@ -15,24 +11,20 @@ import { TerminalComponent } from '../common/terminal/terminal.component';
 import { WebContainerService } from '../web-container/web-container.service';
 
 @Component({
-  selector: 'app-home',
+  selector: 'homework-home',
   standalone: true,
   template: `
     <div class="container">
-      <app-editor
-        [value]="editorValue"
-        (valueChange)="setEditorValue($event)"
-      />
-      <app-preview [url]="previewUrl()" />
+      <homework-editor [value]="editorValue" (valueChange)="setEditorValue($event)" />
+      <homework-preview [url]="previewUrl()" />
     </div>
-    <app-terminal
+    <homework-terminal
       [data]="terminalData()"
       (dataChange)="setTerminalData($event)"
       (sizeChange)="resize($event)"
     />
     @if (markdown()) {
-
-    <analog-markdown [content]="markdown()?.content" />
+      <analog-markdown [content]="markdown()?.content" />
     }
   `,
   styles: `
@@ -44,14 +36,9 @@ import { WebContainerService } from '../web-container/web-container.service';
       width: 100%;
     }
   `,
-  imports: [
-    MarkdownComponent,
-    TerminalComponent,
-    EditorComponent,
-    PreviewComponent,
-  ],
+  imports: [MarkdownComponent, TerminalComponent, EditorComponent, PreviewComponent],
 })
-export default class HomeComponent {
+export default class HomeComponent implements OnInit {
   private readonly httpClient = inject(HttpClient);
   private readonly webContainerService = inject(WebContainerService);
 
@@ -67,27 +54,27 @@ export default class HomeComponent {
 
   protected readonly markdown = toSignal(injectContent());
 
-  ngOnInit() {
+  ngOnInit(): void {
     forkJoin([this.files, from(this.webContainerService.boot())])
       .pipe(
         switchMap(([files]) => this.webContainerService.mount(files)),
         switchMap(() => this.webContainerService.startShell()),
         switchMap(() => this.webContainerService.readFile('index.js'))
       )
-      .subscribe((indexjs) => {
+      .subscribe(indexjs => {
         this.editorValue = indexjs;
       });
   }
 
-  protected resize(size: TerminalSize) {
+  protected resize(size: TerminalSize): void {
     this.webContainerService.resize(size.cols, size.rows);
   }
 
-  protected setTerminalData(data: string) {
+  protected setTerminalData(data: string): void {
     this.webContainerService.writeProcessData(data);
   }
 
-  protected setEditorValue(value: string | undefined) {
+  protected setEditorValue(value: string | undefined): void {
     if (value != null) {
       this.webContainerService.writeFile('/index.js', value);
     }
