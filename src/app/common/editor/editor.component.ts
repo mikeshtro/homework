@@ -1,23 +1,44 @@
-import { Component, model } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, effect, ElementRef, inject, model } from '@angular/core';
+import { javascript } from '@codemirror/lang-javascript';
+import { EditorView } from '@codemirror/view';
+import { basicSetup } from 'codemirror';
 
 @Component({
   selector: 'homework-editor',
   standalone: true,
-  template: '<textarea [(ngModel)]="value"></textarea>',
+  template: '',
   styles: `
-    textarea {
+    :host {
+      display: block;
       width: 100%;
       height: 100%;
-      resize: none;
       border-radius: 0.5rem;
-      background: black;
-      color: white;
       padding: 0.5rem 1rem;
     }
   `,
-  imports: [FormsModule],
 })
 export class EditorComponent {
+  private readonly elementRef = inject(ElementRef);
+
   readonly value = model<string>();
+
+  private readonly view = new EditorView({
+    extensions: [
+      basicSetup,
+      javascript(),
+      EditorView.updateListener.of(v => this.value.set(v.view.state.doc.toString())),
+    ],
+    parent: this.elementRef.nativeElement,
+  });
+
+  constructor() {
+    effect(() => {
+      if (this.view.state.doc.toString() !== this.value()) {
+        const transaction = this.view.state.update({
+          changes: { from: 0, to: this.view.state.doc.toString().length, insert: this.value() },
+        });
+        this.view.dispatch(transaction);
+      }
+    });
+  }
 }
