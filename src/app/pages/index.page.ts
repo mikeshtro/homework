@@ -13,25 +13,46 @@ import { WebContainerService } from '../web-container/web-container.service';
   selector: 'homework-index-page',
   standalone: true,
   template: `
-    <div class="container">
-      <homework-editor [value]="editorValue" (valueChange)="setEditorValue($event)" />
-      <homework-preview [url]="previewUrl()" />
+    <div>
+      <a routerLink="first">First</a>
+      <router-outlet />
     </div>
-    <homework-terminal
-      [data]="terminalData()"
-      (dataChange)="setTerminalData($event)"
-      (sizeChange)="resize($event)"
-    />
-    <a routerLink="first">First</a>
-    <router-outlet />
+    <div class="ide">
+      <div class="code">
+        <homework-editor [value]="editorValue" (valueChange)="setEditorValue($event)" />
+        <homework-preview [url]="previewUrl()" />
+      </div>
+      <homework-terminal
+        class="terminal"
+        [data]="terminalData()"
+        (dataChange)="setTerminalData($event)"
+        (sizeChange)="resize($event)"
+      />
+    </div>
   `,
   styles: `
-    .container {
+    :host {
+      height: 100%;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
-      height: 100%;
+    }
+
+    .ide {
+      display: flex;
+      flex-direction: column;
       width: 100%;
+    }
+
+    .code {
+      flex: 3;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .terminal {
+      flex: 2;
     }
   `,
   imports: [RouterOutlet, RouterLink, TerminalComponent, EditorComponent, PreviewComponent],
