@@ -1,3 +1,4 @@
+import { RouteMeta } from '@analogjs/router';
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
@@ -13,9 +14,13 @@ import { WebContainerService } from '../web-container/web-container.service';
   selector: 'homework-index-page',
   standalone: true,
   template: `
-    <div>
-      <a routerLink="first">First</a>
-      <router-outlet />
+    <div class="instructions">
+      <div class="markdown">
+        <router-outlet />
+      </div>
+      <div class="links">
+        <a routerLink="first">Next</a>
+      </div>
     </div>
     <div class="ide">
       <div class="code">
@@ -36,6 +41,24 @@ import { WebContainerService } from '../web-container/web-container.service';
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
+    }
+
+    .instructions {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .markdown {
+      flex: 1;
+      overflow: auto;
+    }
+
+    .links {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
     }
 
     .ide {
