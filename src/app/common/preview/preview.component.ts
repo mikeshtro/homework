@@ -19,6 +19,6 @@ export class PreviewComponent {
   readonly url = input<string>();
 
   protected readonly iframeUrl = computed(() =>
-    this.sanitizer.bypassSecurityTrustResourceUrl(this.url() ?? 'loading.html')
+    this.sanitizer.bypassSecurityTrustResourceUrl(this.url() ?? 'about:blank')
   );
 }

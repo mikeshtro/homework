@@ -1,30 +1,47 @@
-import { Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { WebContainer, WebContainerProcess } from '@webcontainer/api';
 
 @Injectable({ providedIn: 'root' })
 export class WebContainerService {
-  private state: 'empty' | 'booting' | 'ready' | 'error' = 'empty';
   private processWriter: WritableStreamDefaultWriter<string> | undefined;
 
   private readonly instance = signal<WebContainer | undefined>(undefined);
   private readonly process = signal<WebContainerProcess | undefined>(undefined);
+  private readonly state = signal<'empty' | 'booting' | 'ready' | 'error'>('empty');
+  private readonly serverUrl = signal<string | undefined>(undefined);
 
-  readonly serverUrl = signal<string | undefined>(undefined);
+  readonly url = computed(() => {
+    const serverUrl = this.serverUrl();
+    if (serverUrl != null && this.state() === 'ready') {
+      return serverUrl;
+    }
+
+    if (this.state() === 'ready') {
+      return 'waiting.html';
+    }
+
+    if (this.state() === 'empty' || this.state() === 'booting') {
+      return 'loading.html';
+    }
+
+    return 'error.html';
+  });
+
   readonly processOutput = signal<string>('');
 
   async boot(): Promise<void> {
-    if (this.state !== 'empty' && this.state !== 'error') {
+    if (this.state() !== 'empty' && this.state() !== 'error') {
       return Promise.reject(Error('Web container is already booting or booted'));
     }
 
-    this.state = 'booting';
+    this.state.set('booting');
     try {
       const instance = await WebContainer.boot();
       instance.on('server-ready', (port, url) => this.serverUrl.set(url));
       this.instance.set(instance);
-      this.state = 'ready';
+      this.state.set('ready');
     } catch (error) {
-      this.state = 'error';
+      this.state.set('error');
       return Promise.reject(error);
     }
   }

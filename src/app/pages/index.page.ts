@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { forkJoin, from, switchMap } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 import { EditorComponent } from '../common/editor/editor.component';
 import { PreviewComponent } from '../common/preview/preview.component';
@@ -67,19 +67,17 @@ export default class IndexPageComponent implements OnInit {
 
   protected readonly terminalData = this.webContainerService.processOutput;
 
-  protected readonly previewUrl = this.webContainerService.serverUrl;
+  protected readonly previewUrl = this.webContainerService.url;
 
   protected editorValue = '';
 
   ngOnInit(): void {
-    forkJoin([this.files, from(this.webContainerService.boot())])
-      .pipe(
-        switchMap(([files]) => this.webContainerService.mount(files)),
-        switchMap(() => this.webContainerService.startShell()),
-        switchMap(() => this.webContainerService.readFile('src/app/app.component.ts'))
-      )
-      .subscribe(indexjs => {
-        this.editorValue = indexjs;
+    Promise.all([firstValueFrom(this.files), this.webContainerService.boot()])
+      .then(([files]) => this.webContainerService.mount(files))
+      .then(() => this.webContainerService.startShell())
+      .then(() => this.webContainerService.readFile('src/app/app.component.ts'))
+      .then(editorValue => {
+        this.editorValue = editorValue;
       });
   }
 
