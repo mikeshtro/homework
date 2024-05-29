@@ -26,7 +26,9 @@ import { basicSetup } from 'codemirror';
     }
 
     ::ng-deep .cm-editor {
+      height: 100%;
       max-height: var(--editor-height);
+      max-width: var(--editor-width);
     }
   `,
 })
@@ -37,6 +39,9 @@ export class EditorComponent implements OnDestroy {
 
   @HostBinding('style.--editor-height') editorHeight =
     this.elementRef.nativeElement.getBoundingClientRect().height + 'px';
+
+  @HostBinding('style.--editor-width') editorWidth =
+    this.elementRef.nativeElement.getBoundingClientRect().width + 'px';
 
   private readonly view = new EditorView({
     extensions: [
@@ -70,6 +75,7 @@ export class EditorComponent implements OnDestroy {
         return;
       }
       this.editorHeight = entry.contentRect.height + 'px';
+      this.editorWidth = entry.contentRect.width + 'px';
     });
     this.resizeObserver.observe(this.elementRef.nativeElement);
   }
