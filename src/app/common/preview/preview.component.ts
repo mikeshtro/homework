@@ -1,10 +1,10 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, ElementRef, inject, input, viewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'homework-preview',
   standalone: true,
-  template: `<iframe [src]="iframeUrl()"></iframe>`,
+  template: `<iframe #iframe [src]="iframeUrl()"></iframe>`,
   styles: `
     iframe {
       height: 100%;
@@ -21,4 +21,13 @@ export class PreviewComponent {
   protected readonly iframeUrl = computed(() =>
     this.sanitizer.bypassSecurityTrustResourceUrl(this.url() ?? 'about:blank')
   );
+
+  private readonly iframe = viewChild<ElementRef<HTMLIFrameElement>>('iframe');
+
+  refresh(): void {
+    const iframe = this.iframe()?.nativeElement;
+    if (iframe != null) {
+      iframe.src = this.url() ?? 'about:blank';
+    }
+  }
 }

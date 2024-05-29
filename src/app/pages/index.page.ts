@@ -24,8 +24,14 @@ import { WebContainerService } from '../web-container/web-container.service';
     </div>
     <div class="ide">
       <div class="code">
-        <homework-editor [value]="editorValue" (valueChange)="setEditorValue($event)" />
-        <homework-preview [url]="previewUrl()" />
+        <homework-editor [(value)]="editorValue" />
+        <homework-preview #preview [url]="previewUrl()" />
+        <span>
+          <button (click)="saveEditorValue()">Save</button>
+        </span>
+        <span>
+          <button (click)="preview.refresh()">Refresh</button>
+        </span>
       </div>
       <homework-terminal
         class="terminal"
@@ -71,7 +77,9 @@ import { WebContainerService } from '../web-container/web-container.service';
       flex: 3;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1rem;
+      grid-template-rows: 1fr auto;
+      column-gap: 1rem;
+      row-gap: 0.5rem;
     }
 
     .terminal {
@@ -112,9 +120,7 @@ export default class IndexPageComponent implements OnInit {
     this.webContainerService.writeProcessData(data);
   }
 
-  protected setEditorValue(value: string | undefined): void {
-    if (value != null) {
-      this.webContainerService.writeFile('src/app/app.component.ts', value);
-    }
+  protected saveEditorValue(): void {
+    this.webContainerService.writeFile('src/app/app.component.ts', this.editorValue);
   }
 }
