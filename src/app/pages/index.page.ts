@@ -1,7 +1,6 @@
-import { RouteMeta } from '@analogjs/router';
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
 import { EditorComponent } from '../common/editor/editor.component';
@@ -14,13 +13,8 @@ import { WebContainerService } from '../web-container/web-container.service';
   selector: 'homework-index-page',
   standalone: true,
   template: `
-    <div class="instructions">
-      <div class="markdown">
-        <router-outlet />
-      </div>
-      <div class="links">
-        <a routerLink="first">Next</a>
-      </div>
+    <div>
+      <router-outlet />
     </div>
     <div class="ide">
       <div class="code">
@@ -86,7 +80,7 @@ import { WebContainerService } from '../web-container/web-container.service';
       flex: 2;
     }
   `,
-  imports: [RouterOutlet, RouterLink, TerminalComponent, EditorComponent, PreviewComponent],
+  imports: [RouterOutlet, TerminalComponent, EditorComponent, PreviewComponent],
 })
 export default class IndexPageComponent implements OnInit {
   private readonly httpClient = inject(HttpClient);
