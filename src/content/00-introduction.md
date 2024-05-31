@@ -10,7 +10,9 @@ You will be given instructions here. On the right side you have a small IDE in w
 changes. Ok, it's not full IDE, it's just code editor with some code highlighting, terminal and
 a small preview of your application.
 
-Try to build the solution yourself based on your knowledge from the workshop. If you get lost, you
-can click "Show solution" button which will show you the suggested solution.
+Try to build the solution yourself based on your knowledge from the workshop. Update the files and
+hit the "Save" button. Your preview will be refreshed automagically. If you don't believe the result
+trey to click the "Refresh" button. If you get lost, you can click "Show solution" button which will
+show you the suggested solution.
 
 And most importantly have fun! Happy coding!

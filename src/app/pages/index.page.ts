@@ -87,6 +87,7 @@ export default class IndexPageComponent implements OnInit {
   private readonly webContainerService = inject(WebContainerService);
 
   private readonly files = this.httpClient.get('api/v1/files', {
+    params: { path: 'starter' },
     responseType: 'arraybuffer',
   });
 
