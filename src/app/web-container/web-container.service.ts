@@ -10,6 +10,8 @@ export class WebContainerService {
   private readonly state = signal<'empty' | 'booting' | 'ready' | 'error'>('empty');
   private readonly serverUrl = signal<string | undefined>(undefined);
 
+  readonly isReady = computed(() => this.state() === 'ready');
+
   readonly url = computed(() => {
     const serverUrl = this.serverUrl();
     if (serverUrl != null && this.state() === 'ready') {

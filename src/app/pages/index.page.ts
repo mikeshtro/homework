@@ -1,12 +1,13 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterOutlet } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
+import { concatMap } from 'rxjs';
 
 import { EditorComponent } from '../common/editor/editor.component';
 import { PreviewComponent } from '../common/preview/preview.component';
 import { TerminalSize } from '../common/terminal/terminal-size';
 import { TerminalComponent } from '../common/terminal/terminal.component';
+import { FileLoaderService } from '../file-loader/file-loader.service';
 import { WebContainerService } from '../web-container/web-container.service';
 
 @Component({
@@ -83,13 +84,10 @@ import { WebContainerService } from '../web-container/web-container.service';
   imports: [RouterOutlet, TerminalComponent, EditorComponent, PreviewComponent],
 })
 export default class IndexPageComponent implements OnInit {
-  private readonly httpClient = inject(HttpClient);
   private readonly webContainerService = inject(WebContainerService);
+  private readonly fileLoaderService = inject(FileLoaderService);
 
-  private readonly files = this.httpClient.get('api/v1/files', {
-    params: { path: 'starter' },
-    responseType: 'arraybuffer',
-  });
+  private readonly files$ = this.fileLoaderService.files$.pipe(takeUntilDestroyed());
 
   protected readonly terminalData = this.webContainerService.processOutput;
 
@@ -98,13 +96,13 @@ export default class IndexPageComponent implements OnInit {
   protected editorValue = '';
 
   ngOnInit(): void {
-    Promise.all([firstValueFrom(this.files), this.webContainerService.boot()])
-      .then(([files]) => this.webContainerService.mount(files))
-      .then(() => this.webContainerService.startShell())
-      .then(() => this.webContainerService.readFile('src/app/app.component.ts'))
-      .then(editorValue => {
+    this.files$
+      .pipe(concatMap(() => this.webContainerService.readFile('src/app/app.component.ts')))
+      .subscribe(editorValue => {
         this.editorValue = editorValue;
       });
+
+    this.webContainerService.boot().then(() => this.webContainerService.startShell());
   }
 
   protected resize(size: TerminalSize): void {
