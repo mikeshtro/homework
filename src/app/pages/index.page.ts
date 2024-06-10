@@ -1,7 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterOutlet } from '@angular/router';
-import { concatMap } from 'rxjs';
 
 import { EditorComponent } from '../common/editor/editor.component';
 import { PreviewComponent } from '../common/preview/preview.component';
@@ -96,11 +95,9 @@ export default class IndexPageComponent implements OnInit {
   protected editorValue = '';
 
   ngOnInit(): void {
-    this.files$
-      .pipe(concatMap(() => this.webContainerService.readFile('src/app/app.component.ts')))
-      .subscribe(editorValue => {
-        this.editorValue = editorValue;
-      });
+    this.files$.subscribe(files => {
+      console.log(files);
+    });
 
     this.webContainerService.boot().then(() => this.webContainerService.startShell());
   }

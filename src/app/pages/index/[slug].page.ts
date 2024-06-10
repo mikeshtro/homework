@@ -4,9 +4,11 @@ import {
   injectContentFiles,
   MarkdownComponent,
 } from '@analogjs/content';
-import { Component, computed } from '@angular/core';
+import { Component, computed, effect, inject, input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
+
+import { FileLoaderService } from '../../file-loader/file-loader.service';
 
 @Component({
   selector: 'homework-index-slug',
@@ -50,6 +52,9 @@ import { RouterLink } from '@angular/router';
 export default class IndexSlugPageComponent {
   protected readonly allContents = injectContentFiles<ContentFile>();
   protected readonly content = toSignal(injectContent());
+  private readonly fileLoaderService = inject(FileLoaderService);
+
+  readonly slug = input.required<string>();
 
   private readonly contentIndex = computed(
     () => this.allContents.findIndex(content => content.slug === this.content()?.slug) ?? -1
@@ -66,4 +71,8 @@ export default class IndexSlugPageComponent {
   protected readonly nextLink = computed(() => {
     return this.allContents.at(this.contentIndex() + 1)?.slug;
   });
+
+  constructor() {
+    effect(() => this.fileLoaderService.loadFiles(this.slug()));
+  }
 }
