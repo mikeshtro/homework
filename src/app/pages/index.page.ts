@@ -2,7 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterOutlet } from '@angular/router';
 
-import { EditorComponent } from '../common/editor/editor.component';
+import { FileContent } from '../common/mutli-editor/file-content';
+import { MultiEditorComponent } from '../common/mutli-editor/multi-editor.component';
 import { PreviewComponent } from '../common/preview/preview.component';
 import { TerminalSize } from '../common/terminal/terminal-size';
 import { TerminalComponent } from '../common/terminal/terminal.component';
@@ -18,7 +19,7 @@ import { WebContainerService } from '../web-container/web-container.service';
     </div>
     <div class="ide">
       <div class="code">
-        <homework-editor [(value)]="editorValue" />
+        <homework-multi-editor [(files)]="openFiles" />
         <homework-preview #preview [url]="previewUrl()" />
         <span>
           <button (click)="saveEditorValue()">Save</button>
@@ -39,7 +40,7 @@ import { WebContainerService } from '../web-container/web-container.service';
     :host {
       height: 100%;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 2fr;
       gap: 1rem;
     }
 
@@ -70,7 +71,7 @@ import { WebContainerService } from '../web-container/web-container.service';
     .code {
       flex: 3;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 2fr 1fr;
       grid-template-rows: 1fr auto;
       column-gap: 1rem;
       row-gap: 0.5rem;
@@ -80,24 +81,27 @@ import { WebContainerService } from '../web-container/web-container.service';
       flex: 2;
     }
   `,
-  imports: [RouterOutlet, TerminalComponent, EditorComponent, PreviewComponent],
+  imports: [RouterOutlet, TerminalComponent, MultiEditorComponent, PreviewComponent],
 })
 export default class IndexPageComponent implements OnInit {
   private readonly webContainerService = inject(WebContainerService);
   private readonly fileLoaderService = inject(FileLoaderService);
 
   private readonly files$ = this.fileLoaderService.files$.pipe(takeUntilDestroyed());
+  private readonly writeFiles$ = this.fileLoaderService.writeFiles$.pipe(takeUntilDestroyed());
 
   protected readonly terminalData = this.webContainerService.processOutput;
 
   protected readonly previewUrl = this.webContainerService.url;
 
-  protected editorValue = '';
+  protected openFiles: FileContent[] = [];
 
   ngOnInit(): void {
     this.files$.subscribe(files => {
-      console.log(files);
+      this.openFiles = files;
     });
+
+    this.writeFiles$.subscribe();
 
     this.webContainerService.boot().then(() => this.webContainerService.startShell());
   }
@@ -111,6 +115,6 @@ export default class IndexPageComponent implements OnInit {
   }
 
   protected saveEditorValue(): void {
-    this.webContainerService.writeFile('src/app/app.component.ts', this.editorValue);
+    this.fileLoaderService.writeFiles(this.openFiles);
   }
 }

@@ -5,6 +5,7 @@ import {
   BehaviorSubject,
   catchError,
   concatMap,
+  defaultIfEmpty,
   delayWhen,
   EMPTY,
   filter,
@@ -18,8 +19,10 @@ import {
   tap,
 } from 'rxjs';
 
+import { FileContent } from '../common/mutli-editor/file-content';
 import { WebContainerService } from '../web-container/web-container.service';
 import { fileDictionary } from './file-dictionary';
+import { WithSlug } from './with-slug';
 
 @Injectable({ providedIn: 'root' })
 export class FileLoaderService {
@@ -35,6 +38,8 @@ export class FileLoaderService {
     scan((acc, value) => acc + value, 0)
   );
 
+  private readonly writeFilesSubject = new Subject<FileContent[]>();
+
   readonly isLoading$ = this.loadingFilesCount$.pipe(map(count => count > 0));
 
   readonly files$ = this.load$.pipe(
@@ -46,19 +51,27 @@ export class FileLoaderService {
     tap(() => this.loadingFiles$.next(-1))
   );
 
+  readonly writeFiles$ = this.writeFilesSubject.pipe(
+    concatMap(files =>
+      forkJoin(
+        files.map(file =>
+          from(this.webContainerService.writeFile(file.fileName, file.content)).pipe(
+            this.processError()
+          )
+        )
+      )
+    )
+  );
+
   loadFiles(path: string): void {
     this.load$.next(path);
   }
 
-  readFile(path: string | undefined): Promise<string> {
-    if (path == null) {
-      return Promise.reject();
-    }
-
-    return this.webContainerService.readFile(path);
+  writeFiles(files: FileContent[]): void {
+    this.writeFilesSubject.next(files);
   }
 
-  private getFiles(): OperatorFunction<string, { slug: string; value: ArrayBuffer }> {
+  private getFiles(): OperatorFunction<string, WithSlug<ArrayBuffer>> {
     return concatMap(slug =>
       this.httpClient
         .get('api/v1/files', { params: { path: slug }, responseType: 'arraybuffer' })
@@ -66,30 +79,26 @@ export class FileLoaderService {
     );
   }
 
-  private mountFiles(): OperatorFunction<
-    { slug: string; value: ArrayBuffer },
-    { slug: string; value: void }
-  > {
+  private mountFiles(): OperatorFunction<WithSlug<ArrayBuffer>, WithSlug<void>> {
     return concatMap(({ slug, value }) =>
       from(this.webContainerService.mount(value)).pipe(this.processError(), this.withSlug(slug))
     );
   }
 
-  private readFiles(): OperatorFunction<{ slug: string }, { fileName: string; content: string }[]> {
+  private readFiles(): OperatorFunction<WithSlug, FileContent[]> {
     return concatMap(({ slug }) =>
       forkJoin(
         fileDictionary[slug].map(fileName =>
-          from(this.readFile(fileName)).pipe(map(content => ({ fileName, content })))
+          from(this.webContainerService.readFile(fileName)).pipe(
+            map(content => ({ fileName, content }))
+          )
         )
-      ).pipe(this.processError())
+      ).pipe(defaultIfEmpty([]), this.processError())
     );
   }
 
-  private withSlug<T>(slug: string): OperatorFunction<T, { slug: string; value: T }> {
-    return pipe(
-      map(value => ({ slug, value })),
-      tap(e => console.log(e))
-    );
+  private withSlug<T>(slug: string): OperatorFunction<T, WithSlug<T>> {
+    return pipe(map(value => ({ slug, value })));
   }
 
   private processError<T>(): OperatorFunction<T, T | never> {
