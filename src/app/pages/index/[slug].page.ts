@@ -21,10 +21,10 @@ import { FileLoaderService } from '../../file-loader/file-loader.service';
     </div>
     <div class="links">
       @if (previousLink()) {
-        <a [routerLink]="['..', previousLink()]">Previous</a>
+        <a class="link" [routerLink]="['..', previousLink()]">Previous</a>
       }
       @if (nextLink()) {
-        <a [routerLink]="['..', nextLink()]">Next</a>
+        <a class="link" [routerLink]="['..', nextLink()]">Next</a>
       }
     </div>
   `,
@@ -45,6 +45,14 @@ import { FileLoaderService } from '../../file-loader/file-loader.service';
       display: flex;
       gap: 1rem;
       justify-content: flex-end;
+    }
+
+    .link {
+      border: 1px solid var(--color-darker);
+      text-decoration: none;
+      border-radius: 0.25rem;
+      background-color: var(--color-light);
+      padding: 0.75rem 2rem;
     }
   `,
   imports: [RouterLink, MarkdownComponent],

@@ -22,8 +22,6 @@ import { basicSetup } from 'codemirror';
       display: block;
       width: 100%;
       height: 100%;
-      border-radius: 0.5rem;
-      border: 1px solid black;
     }
 
     ::ng-deep .cm-editor {

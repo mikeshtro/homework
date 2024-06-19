@@ -18,6 +18,12 @@ import { TerminalSize } from './terminal-size';
   selector: 'homework-terminal',
   standalone: true,
   template: '',
+  styles: `
+    :host {
+      display: block;
+      border: var(--border);
+    }
+  `,
 })
 export class TerminalComponent implements OnInit, OnDestroy {
   private readonly elementRef = inject(ElementRef<HTMLElement>);
@@ -27,7 +33,17 @@ export class TerminalComponent implements OnInit, OnDestroy {
   readonly sizeChange = output<TerminalSize>();
   readonly dataChange = output<string>();
 
-  private readonly terminal = new Terminal({ convertEol: true });
+  private readonly terminal = new Terminal({
+    convertEol: true,
+    theme: {
+      background: '#fefdfc',
+      cursor: '#010003',
+      cursorAccent: '#fefdfc',
+      foreground: '#010003',
+      selectionBackground: '#d6e5f3',
+      selectionInactiveBackground: '#dfe5eb',
+    },
+  });
   private readonly fitAddon = new FitAddon();
 
   constructor() {

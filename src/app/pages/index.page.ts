@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterOutlet } from '@angular/router';
 
@@ -14,19 +14,16 @@ import { WebContainerService } from '../web-container/web-container.service';
   selector: 'homework-index-page',
   standalone: true,
   template: `
-    <div>
+    <div class="instructions">
       <router-outlet />
     </div>
     <div class="ide">
       <div class="code">
-        <homework-multi-editor [(files)]="openFiles" />
+        <homework-multi-editor
+          [files]="openFiles()"
+          (filesChange)="saveEditorValue($event ?? [])"
+        />
         <homework-preview #preview [url]="previewUrl()" />
-        <span>
-          <button (click)="saveEditorValue()">Save</button>
-        </span>
-        <span>
-          <button (click)="preview.refresh()">Refresh</button>
-        </span>
       </div>
       <homework-terminal
         class="terminal"
@@ -41,25 +38,11 @@ import { WebContainerService } from '../web-container/web-container.service';
       height: 100%;
       display: grid;
       grid-template-columns: 1fr 2fr;
-      gap: 1rem;
     }
 
     .instructions {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      overflow: hidden;
-    }
-
-    .markdown {
-      flex: 1;
-      overflow: auto;
-    }
-
-    .links {
-      display: flex;
-      gap: 1rem;
-      justify-content: flex-end;
+      border-right: var(--border);
+      padding: 2rem;
     }
 
     .ide {
@@ -72,9 +55,13 @@ import { WebContainerService } from '../web-container/web-container.service';
       flex: 3;
       display: grid;
       grid-template-columns: 2fr 1fr;
-      grid-template-rows: 1fr auto;
-      column-gap: 1rem;
-      row-gap: 0.5rem;
+      position: relative;
+    }
+
+    .refresh-button {
+      position: absolute;
+      top: 0;
+      right: 0;
     }
 
     .terminal {
@@ -94,12 +81,14 @@ export default class IndexPageComponent implements OnInit {
 
   protected readonly previewUrl = this.webContainerService.url;
 
-  protected openFiles: FileContent[] = [];
+  protected readonly openFiles = signal<FileContent[]>([]);
+
+  constructor() {
+    effect(() => this.fileLoaderService.writeFiles(this.openFiles()));
+  }
 
   ngOnInit(): void {
-    this.files$.subscribe(files => {
-      this.openFiles = files;
-    });
+    this.files$.subscribe(files => this.openFiles.set(files));
 
     this.writeFiles$.subscribe();
 
@@ -114,7 +103,7 @@ export default class IndexPageComponent implements OnInit {
     this.webContainerService.writeProcessData(data);
   }
 
-  protected saveEditorValue(): void {
-    this.fileLoaderService.writeFiles(this.openFiles);
+  protected saveEditorValue(openFiles: FileContent[]): void {
+    this.openFiles.set(openFiles);
   }
 }
