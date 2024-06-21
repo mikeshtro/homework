@@ -4,11 +4,11 @@ import { Component } from '@angular/core';
   selector: 'mcf-root',
   standalone: true,
   imports: [],
-  template: '<h1>Hello from Angular</h1>',
-  styles: `
-    h1 {
-      color: red;
-    }
+  template: `
+    <span>Espresso</span>
+    <span>Latte</span>
+    <span>Cappuccino</span>
   `,
+  styles: ``,
 })
 export class AppComponent {}

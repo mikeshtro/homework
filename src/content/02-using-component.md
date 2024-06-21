@@ -1,8 +1,11 @@
 # Using component
 
+Next step in our application would be to wrap the names into a component so that we can not only
+display the coffee name but add some common styles and basic logic.
+
 We have generated second component for you using command `ng generate component pick-coffee/coffee-overview`.
 It generated three component files: HTML, CSS and TypeScript parts of the component. Now use the
-generated component inside the main AppComponent. Can you do it on your own?
+generated component inside the main AppComponent.
 
 ## Step 1
 
