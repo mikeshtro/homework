@@ -18,5 +18,5 @@ Use the imported class in the AppComponent's imports using `imports: [CoffeeOver
 
 ## Step 3
 
-Use the imported component in the AppComponent's HTML template using its selector. It will look like
-this `<mcf-coffee-overview></mcf-coffee-overview>`
+Use the imported component in the AppComponent's HTML template using its selector. It will contain
+the component by using its selector `<mcf-coffee-overview></mcf-coffee-overview>`

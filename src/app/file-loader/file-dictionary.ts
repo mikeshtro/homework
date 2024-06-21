@@ -8,4 +8,10 @@ export const fileDictionary: Record<string, string[]> = {
     'src/app/pick-coffee/coffee-overview/coffee-overview.component.html',
     'src/app/pick-coffee/coffee-overview/coffee-overview.component.ts',
   ],
+  '03-content-projection': [
+    'src/app/app.component.ts',
+    'src/app/pick-coffee/coffee-overview/coffee-overview.component.css',
+    'src/app/pick-coffee/coffee-overview/coffee-overview.component.html',
+    'src/app/pick-coffee/coffee-overview/coffee-overview.component.ts',
+  ],
 };
