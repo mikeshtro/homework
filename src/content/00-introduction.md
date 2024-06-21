@@ -11,7 +11,7 @@ changes. Ok, it's not full IDE, it's just code editor with some code highlightin
 a small preview of your application.
 
 Try to build the solution yourself based on your knowledge from the workshop. Update the files and
-hit the "Save" button. Your preview will be refreshed automagically. If you don't believe the result
+hit the "Play" button. Your preview will be refreshed automagically. If you don't believe the result
 trey to click the "Refresh" button. If you get lost, you can click "Show solution" button which will
 show you the suggested solution.
 

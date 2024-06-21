@@ -45,7 +45,7 @@ export class EditorComponent implements OnDestroy {
   private readonly view = new EditorView({
     extensions: [
       basicSetup,
-      javascript(),
+      javascript({ typescript: true }),
       angular(),
       EditorView.updateListener.of(v => {
         const value = this.value();

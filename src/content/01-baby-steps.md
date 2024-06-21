@@ -8,5 +8,3 @@ need to reinstall the packages unless package.lock file is changed.
 
 You can start your application by writing `npm run start`. This will build you application and serve
 it in development mode. See the changes in the right window.
-
-Now try to update the component in the editor. You can see the application is reloaded on each save.
