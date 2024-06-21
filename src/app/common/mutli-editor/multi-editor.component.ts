@@ -73,7 +73,10 @@ export class MultiEditorComponent {
   constructor() {
     effect(() => {
       const newFiles = this.files();
-      untracked(() => this.unsavedFiles.set(newFiles ?? []));
+      untracked(() => {
+        this.unsavedFiles.set(newFiles ?? []);
+        this.openFile = newFiles?.at(0);
+      });
     });
   }
 
