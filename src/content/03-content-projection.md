@@ -14,7 +14,8 @@ CoffeeOverviewComponent like so
 </mcf-coffee-overview>
 ```
 
-To do that we use content projection.
+To do that we use content projection. In your component you can use `ng-content` element as a
+placeholder. This placeholder will be replaced in runtime by child elements passed through HTML.
 
 ## Step 1
 
