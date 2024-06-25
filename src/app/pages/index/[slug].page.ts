@@ -33,18 +33,19 @@ import { FileLoaderService } from '../../file-loader/file-loader.service';
       display: flex;
       flex-direction: column;
       height: 100%;
-      overflow: hidden;
+      overflow: auto;
     }
 
     .markdown {
       flex: 1;
-      overflow: auto;
+      padding: 2rem 2rem 0 2rem;
     }
 
     .links {
       display: flex;
       gap: 1rem;
       justify-content: flex-end;
+      padding: 0 2rem 2rem 2rem;
     }
 
     .link {

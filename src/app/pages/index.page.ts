@@ -42,7 +42,7 @@ import { WebContainerService } from '../web-container/web-container.service';
 
     .instructions {
       border-right: var(--border);
-      padding: 2rem;
+      overflow: hidden;
     }
 
     .ide {
