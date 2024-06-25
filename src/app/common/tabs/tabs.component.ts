@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, model, untracked } from '@angular/core';
+import { Component, computed, input, model } from '@angular/core';
 
 @Component({
   selector: 'homework-tabs',
@@ -39,11 +39,4 @@ export class TabsComponent {
   protected readonly displayFiles = computed(() =>
     this.files()?.map(file => ({ fullName: file, shortName: file.split('/').at(-1) }))
   );
-
-  constructor() {
-    effect(() => {
-      const firstFile = this.files()?.at(0);
-      untracked(() => this.openFile.set(firstFile));
-    });
-  }
 }

@@ -75,7 +75,8 @@ export class MultiEditorComponent {
       const newFiles = this.files();
       untracked(() => {
         this.unsavedFiles.set(newFiles ?? []);
-        this.openFile = newFiles?.at(0);
+        this.openFile =
+          newFiles?.find(file => file.fileName === this.openFile?.fileName) ?? newFiles?.at(0);
       });
     });
   }
