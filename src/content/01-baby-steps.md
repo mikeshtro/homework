@@ -1,4 +1,4 @@
-# Start Angular application
+# Baby steps
 
 To start any Angular application you need to install all npm dependencies first. Write `npm install`
 into the console. This takes some time. When everything is installed, you can start your application.

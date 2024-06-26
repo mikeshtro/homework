@@ -1,0 +1,14 @@
+<span class="coffee">Select me, I am</span>
+<ng-content />
+<label class="label">
+  <span>Amount:</span>
+  <input type="number" [value]="amount" />
+</label>
+<button (click)="orderCoffee()">Give me more</button>
+@if (amount > 10) {
+  <span class="warning">Don't you think this is too much?</span>
+} @else if (amount > 0) {
+  <span>You like coffee, he?</span>
+} @else {
+  <span>No coffee? 🤔</span>
+}

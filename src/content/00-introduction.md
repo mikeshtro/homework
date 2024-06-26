@@ -16,5 +16,8 @@ trey to click the "Refresh" button.
 
 There will always be some information given what should be done and what Angular feature is the step
 focused on. Then there will be step by step tutorial. Try to do it without the step by step first.
+When you finish the step and go to the next step, all your changes will be updated to the proposed
+solution, so when you are really lost, just go to the next step, look at the code and then go back
+and try to rebuild it by yourself.
 
 And most importantly have fun! Happy coding!
