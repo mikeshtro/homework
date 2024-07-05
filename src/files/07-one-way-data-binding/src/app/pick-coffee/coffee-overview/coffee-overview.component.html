@@ -1,0 +1,10 @@
+<span class="coffee">Select me, I am</span>
+<ng-content />
+<mcf-coffee-input [(value)]="amount" />
+@if (amount > 10) {
+  <span class="warning">Don't you think this is too much?</span>
+} @else if (amount > 0) {
+  <span>You like coffee, he?</span>
+} @else {
+  <span>No coffee? 🤔</span>
+}
