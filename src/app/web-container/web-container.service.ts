@@ -1,5 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { WebContainer, WebContainerProcess } from '@webcontainer/api';
+import { FileSystemTree, WebContainer, WebContainerProcess } from '@webcontainer/api';
 
 @Injectable({ providedIn: 'root' })
 export class WebContainerService {
@@ -84,7 +84,7 @@ export class WebContainerService {
     this.processWriter?.write(data);
   }
 
-  mount(files: ArrayBuffer): Promise<void> {
+  mount(files: FileSystemTree): Promise<void> {
     const instance = this.instance();
     if (instance == null) {
       return Promise.reject('WebContainer instance is not running');

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { FileSystemTree } from '@webcontainer/api';
 import {
   catchError,
   concatMap,
@@ -68,15 +69,15 @@ export class FileLoaderService {
     this.writeFilesSubject.next(files);
   }
 
-  private getFiles(): OperatorFunction<string, WithSlug<ArrayBuffer>> {
+  private getFiles(): OperatorFunction<string, WithSlug<FileSystemTree>> {
     return switchMap(slug =>
       this.httpClient
-        .get('api/v1/files', { params: { path: slug }, responseType: 'arraybuffer' })
+        .get<FileSystemTree>(`${slug}.json`)
         .pipe(this.processError(), this.withSlug(slug))
     );
   }
 
-  private mountFiles(): OperatorFunction<WithSlug<ArrayBuffer>, WithSlug<void>> {
+  private mountFiles(): OperatorFunction<WithSlug<FileSystemTree>, WithSlug<void>> {
     return switchMap(({ slug, value }) =>
       from(this.webContainerService.mount(value)).pipe(this.processError(), this.withSlug(slug))
     );
