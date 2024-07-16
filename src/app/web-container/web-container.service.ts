@@ -68,7 +68,12 @@ export class WebContainerService {
   }
 
   async writeFile(file: string, data: string): Promise<void> {
-    await this.instance()?.fs.writeFile(file, data);
+    const instance = this.instance();
+    if (instance == null) {
+      return Promise.reject('WebContainer instance is not running');
+    }
+
+    return instance.fs.writeFile(file, data);
   }
 
   async readFile(file: string): Promise<string> {
