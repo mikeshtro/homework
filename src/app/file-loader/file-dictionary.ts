@@ -47,4 +47,15 @@ export const fileDictionary: Record<string, string[]> = {
     'src/app/pick-coffee/coffee-input/coffee-input.component.html',
     'src/app/pick-coffee/coffee-input/coffee-input.component.ts',
   ],
+  '08-calculated-values': [
+    'src/app/app.component.ts',
+    'src/app/coffee-type.ts',
+    'src/app/coffee-price.ts',
+    'src/app/pick-coffee/coffee-overview/coffee-overview.component.css',
+    'src/app/pick-coffee/coffee-overview/coffee-overview.component.html',
+    'src/app/pick-coffee/coffee-overview/coffee-overview.component.ts',
+    'src/app/pick-coffee/coffee-input/coffee-input.component.css',
+    'src/app/pick-coffee/coffee-input/coffee-input.component.html',
+    'src/app/pick-coffee/coffee-input/coffee-input.component.ts',
+  ],
 };
