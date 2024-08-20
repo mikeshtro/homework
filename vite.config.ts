@@ -6,7 +6,7 @@ import analog from '@analogjs/platform';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   build: {
-    target: ['es2020'],
+    target: ['es2022'],
   },
   resolve: {
     mainFields: ['module'],

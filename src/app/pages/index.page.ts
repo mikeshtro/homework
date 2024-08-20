@@ -144,13 +144,13 @@ export default class IndexPageComponent implements OnInit {
     const firstPath = filePath[0];
     if (filePath.length > 1) {
       if (!this.isFileNode(tree[firstPath])) {
-        return this.getFileContent(filePath.slice(1), tree[firstPath].directory);
+        return this.getFileContent(filePath.slice(1), (tree[firstPath] as DirectoryNode).directory);
       } else {
         return undefined;
       }
     } else {
       if (this.isFileNode(tree[firstPath])) {
-        return tree[firstPath].file.contents.toString();
+        return (tree[firstPath] as FileNode).file.contents.toString();
       } else {
         return undefined;
       }
