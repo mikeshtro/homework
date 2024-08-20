@@ -46,7 +46,7 @@ Import decimal pipe into app component and use it in the HTML template using its
 parameter defining that we want to round the number to one decimal place.
 
 ```typescript
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, UpperCasePipe } from '@angular/common';
 
 @Component({
   ...
