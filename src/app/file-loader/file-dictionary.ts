@@ -92,4 +92,16 @@ export const fileDictionary: Record<string, string[]> = {
     'src/app/pick-coffee/coffee-input/coffee-input.component.html',
     'src/app/pick-coffee/coffee-input/coffee-input.component.ts',
   ],
+  '12-ng-model': [
+    'src/app/app.component.ts',
+    'src/app/coffee-type.ts',
+    'src/app/coffee-price.ts',
+    'src/app/total-price.pipe.ts',
+    'src/app/pick-coffee/coffee-overview/coffee-overview.component.css',
+    'src/app/pick-coffee/coffee-overview/coffee-overview.component.html',
+    'src/app/pick-coffee/coffee-overview/coffee-overview.component.ts',
+    'src/app/pick-coffee/coffee-input/coffee-input.component.css',
+    'src/app/pick-coffee/coffee-input/coffee-input.component.html',
+    'src/app/pick-coffee/coffee-input/coffee-input.component.ts',
+  ],
 };
