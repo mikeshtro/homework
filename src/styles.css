@@ -1,3 +1,5 @@
+@import 'prismjs/plugins/diff-highlight/prism-diff-highlight.css';
+
 * {
   box-sizing: border-box;
 }

@@ -1,61 +1,57 @@
 # NgModel
 
-You have probably noticed that when you write some number into coffee input manually without using
-order coffee button it will not calculate the price properly. This is because we don't listen for
-the input value change yet. So let's fix it now.
+Extend the application so when user writes a number into CoffeeInputComponent's input it will reflect
+every user change, ignore negative values and non-valid values. Validations will be described later.
+Don't forget to enable the input first.
 
-We will extend our application so when user writes a number into coffee input it will reflect every
-user change. We will ignore negative values. We will do the validations later.
-
-We will use `ngModel` directive from Angular forms module for this. This directive wraps the logic
-from HTML form elements and provides easy API for basic form tasks. Inside coffee input component
-we will update `orderCoffee` method so that it will accept one parameter representing the new value.
-In coffee input component update the HTML template and use `ngModel` directive on the input element,
-listen to `ngModelChange` output and call the `orderCoffee` method with whatever the output passes.
+Use `ngModel` directive from AngularForms module for this functionality. This directive wraps the
+logic from HTML form elements and provides easy API for basic form tasks. Update `orderCoffee` method
+inside CoffeeInputComponent so that it accepts one parameter representing the new value. Update the
+HTML template in CoffeeInputComponent and use `ngModel` directive on the input element, listen to
+`ngModelChange` output and call the `orderCoffee` method with whatever the output passes.
 
 ## Step 1
 
 Import `FormModule` into coffee input component
 
-```typescript
-import { FormsModule } from '@angular/forms';
-
-...
-
-@Component({
-  ...
-  imports: [FormsModule],
-  ...
-})
-export class CoffeeInputComponent {
-  ...
-}
+```diff
+  import { Component, EventEmitter, Input, Output } from '@angular/core';
++ import { FormsModule } from '@angular/forms';
 ```
 
-and use it inside coffee input HTML template and pass the value property into it.
+```diff
+- imports: [],
++ imports: [FormsModule],
+```
 
-```html
-<input type="number" [ngModel]="value" />
+and use it inside CoffeeInputComponent's HTML template and pass the value property into it.
+
+```diff
+- <input type="number" [value]="value" disabled />
++ <input type="number" [ngModel]="value" />
 ```
 
 ## Step 2
 
-Update order coffee method to accept one parameter
+Update `orderCoffee` method to accept one parameter
 
-```typescript
-protected orderCoffee(value: number): void {
-  this.valueChange.emit(value)
-}
+```diff
+  protected orderCoffee(value: number): void {
+-   this.valueChange.emit((this.value ?? 0) + 1);
++   this.valueChange.emit(value)
+  }
 ```
 
 Then use the method in HTML template to listen for `ngModelChange` output
 
-```html
-<input type="number" [ngModel]="value" (ngModelChange)="orderCoffee($event)" />
+```diff
+- <input type="number" [ngModel]="value" />
++ <input type="number" [ngModel]="value" (ngModelChange)="orderCoffee($event)" />
 ```
 
 And fix the button calling the method as well
 
-```html
-<button (click)="orderCoffee((value ?? 0) + 1)">Give me more</button>
+```diff
+- <button (click)="orderCoffee()">Give me more</button>
++ <button (click)="orderCoffee((value ?? 0) + 1)">Give me more</button>
 ```

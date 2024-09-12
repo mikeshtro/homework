@@ -14,7 +14,7 @@ Try to build the solution yourself based on your knowledge from the workshop. Up
 hit the "Play" button. Your preview will be refreshed automagically. If you don't believe the result
 trey to click the "Refresh" button.
 
-There will always be some information given what should be done and what Angular feature is the step
+You will always get some information given what should be done and what Angular feature is the step
 focused on. Then there will be step by step tutorial. Try to do it without the step by step first.
 When you finish the step and go to the next step, all your changes will be updated to the proposed
 solution, so when you are really lost, just go to the next step, look at the code and then go back

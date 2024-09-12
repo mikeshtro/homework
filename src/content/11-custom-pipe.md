@@ -1,87 +1,91 @@
 # Custom pipe
 
-Now, when we know what pipes are and how to use them we can go back to the issue in the application
-where get total price method is called from HTML template. We can fix it by creating our custom pipe.
+Now, when you know what pipes are and how to use them you can go back to the issue in the application
+where `getTotalPrice` method is called from HTML template. You can fix it by creating custom pipe.
+Pipes similar to components are re-evaluated every time any of the inputs is changed.
 
-Pipes similar to components are re-evaluated every time any of the inputs is changed. We can also
-disable this feature by marking the pipe as non-pure, but that is not what we want to do here.
-
-The want to refactor our code and create custom pipe called total price pipe. The get total price
-method will be moved from app component to this new pipe and use the pipe in app component HTML
-template instead of calling the pipe manually. For this purpose empty file total-price.pipe.ts is
-already created in our application structure.
+Refactor the application and create custom pipe called TotalPricePipe. Move the `getTotalPrice`
+method from AppComponent to this new pipe and use the pipe in AppComponent's HTML template instead
+of calling the pipe manually. For this purpose empty file total-price.pipe.ts is already created in
+the application structure.
 
 ## Step 1
 
-Create empty total price pipe and move the content of app component `getTotalPrice` method to the
-pipe's transform method. Both ordered coffees and coffee prices have to be passed as parameters.
+Create empty TotalPricePipe and move the content of AppComponent's `getTotalPrice` method to the
+pipe's transform method. Both `orderedCoffees` and `coffeePrices` have to be passed as parameters.
 
-```typescript
-import { Pipe, PipeTransform } from '@angular/core';
+```diff
++ import { Pipe, PipeTransform } from '@angular/core';
++
++ import { CoffeeType } from './coffee-type';
++ import { CoffeePrice } from './coffee-price';
++
++ @Pipe({
++   name: 'totalPrice',
++   standalone: true,
++ })
++ export class TotalPricePipe implements PipeTransform {
++   transform(
++     orderedCoffees: Map<CoffeeType, number>,
++     coffeePrices: CoffeePrice[]
++   ): number {
++     let totalPrice = 0;
++
++     for (const price of coffeePrices) {
++       const amount = orderedCoffees.get(price.id) ?? 0;
++       totalPrice += amount * price.price;
++     }
++
++     return totalPrice;
++   }
++ }
+```
 
-import { CoffeeType } from './coffee-type';
-import { CoffeePrice } from './coffee-price';
-
-@Pipe({
-  name: 'totalPrice',
-  standalone: true,
-})
-export class TotalPricePipe implements PipeTransform {
-  transform(
-    orderedCoffees: Map<CoffeeType, number>,
-    coffeePrices: CoffeePrice[]
-  ): number {
-    let totalPrice = 0;
-
-    for (const price of coffeePrices) {
-      const amount = orderedCoffees.get(price.id) ?? 0;
-      totalPrice += amount * price.price;
-    }
-
-    return totalPrice;
-  }
-}
+```diff
+- protected getTotalPrice(): number {
+-   let totalPrice = 0;
+-
+-   for (const price of this.coffees) {
+-     const amount = this.orderedCoffees.get(price.id) ?? 0;
+-     totalPrice += amount * price.price;
+-   }
+-
+-   return totalPrice;
+- }
 ```
 
 ## Step 2
 
-Import the pipe to app component and use it in the HTML template. We can delete the original method
-from app component as well.
+Import the pipe to AppComponent and use it in the HTML template.
 
-```typescript
-import { TotalPricePipe } from './total-price.pipe';
+```diff
+  import { CoffeeOverviewComponent } from './pick-coffee/coffee-overview/coffee-overview.component';
++ import { TotalPricePipe } from './total-price.pipe';
+```
 
-...
+```diff
+- imports: [DecimalPipe, UpperCasePipe, CoffeeOverviewComponent],
++ imports: [UpperCasePipe, DecimalPipe, CoffeeOverviewComponent, TotalPricePipe],
+```
 
-@Component({
-  ...
-  imports: [UpperCasePipe, DecimalPipe, CoffeeOverviewComponent, TotalPricePipe],
-  template: `
-    ...
-    <div class="total">
-      Total price: {{ orderedCoffees | totalPrice: coffees | number: '1.0-1' }}
-    </div>
-  `
-})
-export class AppComponent {
-  ...
-}
+```diff
+- <div class="total">Total price: {{ getTotalPrice() | number: '1.0-1' }}</div>
++ <div class="total">
++   Total price: {{ orderedCoffees | totalPrice: coffees | number: '1.0-1' }}
++ </div>
 ```
 
 ## Step 3
 
-Did you notice it does not do anything now? As we mentioned previously the pipe is called only when
-one of the inputs is changed. Mutating object is not considered as object change se we need to create
-new object reference in app component's order coffee method.
+Did you notice it does not do anything now? As was mentioned previously the pipe is called only when
+one of the inputs is changed. Mutating object is not considered as object change so you need to create
+new object reference in AppComponent's `orderCoffee` method.
 
-```typescript
-export class AppComponent {
-  ...
-
+```diff
   protected orderCoffee(amount: number, id: CoffeeType): void {
-    const copy = new Map(this.orderedCoffees);
-    copy.set(id, amount);
-    this.orderedCoffees = copy;
+-   this.orderedCoffees.set(id, amount);
++   const copy = new Map(this.orderedCoffees);
++   copy.set(id, amount);
++   this.orderedCoffees = copy;
   }
-}
 ```
