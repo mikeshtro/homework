@@ -20,7 +20,7 @@ Import the component TypeScript file into the AppComponent TypeScript file
 ```diff
 + import {
 +  CoffeeOverviewComponent
-+ } from './pick-coffee/coffee-overview/coffee-overview.component;'
++ } from './pick-coffee/coffee-overview/coffee-overview.component';
 ```
 
 ## Step 2
