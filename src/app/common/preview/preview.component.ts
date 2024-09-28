@@ -25,7 +25,8 @@ import { DomSanitizer } from '@angular/platform-browser';
   `,
   styles: `
     :host {
-      display: block;
+      display: flex;
+      flex-direction: column;
     }
 
     .header {
